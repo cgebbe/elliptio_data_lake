@@ -1,3 +1,17 @@
+- [About](#about)
+- [Problems and solution approach](#problems-and-solution-approach)
+- [Functional specification / User stories](#functional-specification--user-stories)
+  - [Save files](#save-files)
+  - [Searching files by metadata](#searching-files-by-metadata)
+  - [Using files](#using-files)
+  - [Searching files by lineage](#searching-files-by-lineage)
+- [Technical specification](#technical-specification)
+  - [High level design](#high-level-design)
+  - [Alternatives](#alternatives)
+- [Further considerations](#further-considerations)
+  - [Licensing](#licensing)
+  - [Cost](#cost)
+
 # About
 
 ElliptIO is an opinionated application (idea) on how to store and access files in data lakes.
