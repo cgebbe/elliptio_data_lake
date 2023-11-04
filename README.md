@@ -38,11 +38,14 @@ Particular in data science you often find data lakes where...
 Andy is an ambitious data scientist who analyzes data and trains models. He just prepared a new `train.txt` and `test.txt` with a special stratification method. He saves them with the following API call:
 
 ```python
-artifact = elliptio.create_artifact()
-artifact.save_files(["train.txt", "test.txt"], info={
-  "type": "dataset_list",
-  "stratification": "new-cool-method",
-})
+import elliptio as eio
+artifact = eio.save(
+  ["train.txt", "test.txt"],
+  info={
+    "type": "dataset_list",
+    "stratification": "new-cool-method",
+  },
+)
 ```
 
 Note that he doesn't need to specify the destination. The destination path is generated automatically and the S3 bucket is defined as an environment variable.
@@ -63,7 +66,7 @@ Based on the displayed results and the `stratification: new-cool-method` label, 
 To use the file, Brenda uses the unique artifact ID and runs:
 
 ```python
-artifact = elliptio.get_artifact("id_123456789")
+artifact = eio.load("id_123456789")
 pprint(artifact.metadata)
 df = pd.read_csv(artifact.files["train.txt"].s3_url)
 ```
