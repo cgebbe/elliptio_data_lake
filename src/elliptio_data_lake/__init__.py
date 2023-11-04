@@ -1,2 +1,5 @@
-def hello():
-    return "Hello from elliptio-data-lake!"
+from ._save_func import save
+
+__all__ = [
+    "save",
+]

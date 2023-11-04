@@ -1,11 +1,15 @@
 [project]
 name = "elliptio-data-lake"
 version = "0.1.0"
-description = "Add your description here"
+description = ""
 authors = [
     { name = "Christian Gebbe", email = "" }
 ]
-dependencies = []
+dependencies = [
+    "boto3>=1.28.78",
+    "assertpy>=1.1",
+    "GitPython>=3.1.40",
+]
 readme = "README.md"
 requires-python = ">= 3.11"
 
@@ -15,7 +19,17 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = []
+dev-dependencies = [
+    "pytest>=7.4.3",
+    # "moto[s3]>=4.2.7",
+    "black>=23.10.1",
+    "ruff>=0.1.4",
+    "mypy>=1.6.1",
+    "ipykernel>=6.26.0",
+    "boto3-stubs[essential]>=1.28.78",
+    "moto[s3,all]>=4.2.7",
+    "pre-commit>=3.5.0",
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true
