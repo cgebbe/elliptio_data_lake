@@ -17,8 +17,9 @@ cwcwidth==0.1.9
 debugpy==1.8.0
 decorator==5.1.1
 distlib==0.3.7
+dnspython==2.4.2
 docopt==0.6.2
--e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@33f4fc7d9b7ddec1fd90116ef0cfe1cffaf18f66#egg=elliptio
+-e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@d05dbe4b9b43f8143e8266dd8b36ac11657f76e5#egg=elliptio
 executing==2.0.1
 filelock==3.13.1
 gitdb==4.0.11
@@ -56,6 +57,7 @@ psutil==5.9.6
 ptyprocess==0.7.0
 pure-eval==0.2.2
 Pygments==2.16.1
+pymongo==4.6.0
 python-dateutil==2.8.2
 python-dotenv==1.0.0
 pyxdg==0.28
