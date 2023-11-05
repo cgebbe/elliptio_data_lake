@@ -38,7 +38,7 @@ for document in cursor:
 
 print("Finished")
 
-#%% create database and collection
+# %% create database and collection
 
 # database and collection is created automatically, see
 # https://stackoverflow.com/a/8566951/2135504
@@ -46,11 +46,9 @@ dct = {
     "name": "John Doe",
     "email": "johndoe@example.com",
     "age": 32,
-    "dct": {"1": 2, "a":"b"},
-    "lst": [1,2,3, "foo"],
+    "dct": {"1": 2, "a": "b"},
+    "lst": [1, 2, 3, "foo"],
 }
 
 collection = client["main"]["main"]
 collection.insert_one(dct)
-
-

@@ -1,4 +1,4 @@
-# This is 
+# This is
 
 - file
 - b
