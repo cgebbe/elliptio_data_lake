@@ -19,7 +19,7 @@ decorator==5.1.1
 distlib==0.3.7
 dnspython==2.4.2
 docopt==0.6.2
--e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@d05dbe4b9b43f8143e8266dd8b36ac11657f76e5#egg=elliptio
+-e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@310bec61ced973129d427d0a170c9810f8f50323#egg=elliptio
 executing==2.0.1
 filelock==3.13.1
 gitdb==4.0.11
