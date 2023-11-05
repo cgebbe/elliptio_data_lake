@@ -20,13 +20,6 @@ class File:
     s3_url: PurePosixPath
 
 
-@dataclass
-class Artifact:
-    s3_base_path: PurePosixPath
-    files: list[PurePosixPath]
-    metadata: dict
-
-
 def save(items: Iterable[os.PathLike]):
     with soft_assertions():
         for i in items:
@@ -50,17 +43,15 @@ def save(items: Iterable[os.PathLike]):
 
     # add metadata
     metadata = _get_metadata()
+    metadata["files"] = [str(p.relative_to(common_parent)) for p in paths]
+    metadata["s3_base_path"] = str(s3_base_path)
     yaml_string = yaml.safe_dump(metadata)
     s3.Object(
         bucket_name=bucket_name,
         key=str(s3_base_path / "metadata.yaml"),
     ).put(Body=yaml_string)
 
-    return Artifact(
-        s3_base_path=s3_base_path,
-        files=[p.relative_to(common_parent) for p in paths],
-        metadata=metadata,
-    )
+    return metadata
 
 
 def _get_s3_base_path():
@@ -78,13 +69,11 @@ def _get_username():
 
 
 def _get_metadata():
-    return (
-        {
-            "user": _get_username(),
-            "creation_time": datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S"),
-            "python_packages": _get_python_packages(),
-        },
-    )
+    return {
+        "user": _get_username(),
+        "creation_time": datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S"),
+        "python_packages": _get_python_packages(),
+    }
 
 
 def _get_python_packages():
