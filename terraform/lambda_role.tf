@@ -19,7 +19,7 @@ EOF
 resource "aws_iam_policy" "ssm_policy" {
   name        = "SSMParameterAccessPolicy"
   description = "Policy to allow access to SSM Parameter Store"
-  
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -84,17 +84,44 @@ resource "aws_iam_policy" "cloudwatch_logs_policy" {
 EOF
 }
 
-# Attach the inline policies to the IAM role
+
+
+# Create an IAM policy that grants S3 access (replace with your policy content)
+resource "aws_iam_policy" "s3_access_policy" {
+  name        = "S3AccessPolicy"
+  description = "Policy to allow access to S3 bucket"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+# Attach the IAM policy to the IAM role
+resource "aws_iam_role_policy_attachment" "s3_access_attachment" {
+  policy_arn = aws_iam_policy.s3_access_policy.arn
+  role       = aws_iam_role.lambda.name
+}
+
 resource "aws_iam_role_policy_attachment" "ssm_attachment" {
   policy_arn = aws_iam_policy.ssm_policy.arn
   role       = aws_iam_role.lambda.name
 }
-
 resource "aws_iam_role_policy_attachment" "mongodb_attachment" {
   policy_arn = aws_iam_policy.mongodb_policy.arn
   role       = aws_iam_role.lambda.name
 }
-
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs_attachment" {
   policy_arn = aws_iam_policy.cloudwatch_logs_policy.arn
   role       = aws_iam_role.lambda.name

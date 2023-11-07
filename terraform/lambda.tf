@@ -1,16 +1,17 @@
 data "archive_file" "main" {
   type        = "zip"
-  source_file = "lambda_func.py"
+  source_dir  = "lambda_func"
   output_path = "lambda_func.zip"
 }
 
 resource "aws_lambda_function" "main" {
-  filename      = data.archive_file.main.output_path
+  filename         = data.archive_file.main.output_path
   source_code_hash = data.archive_file.main.output_base64sha256
-  function_name = "etl-s3-metadata-to-mongodb"
-  handler       = "lambda_func.lambda_handler"
-  runtime       = "python3.9"
-  role          = aws_iam_role.lambda.arn
+  function_name    = "etl-s3-metadata-to-mongodb"
+  handler          = "lambda_func.lambda_handler"
+  runtime          = "python3.9"
+  timeout          = 10
+  role             = aws_iam_role.lambda.arn
 }
 
 resource "aws_lambda_permission" "main" {

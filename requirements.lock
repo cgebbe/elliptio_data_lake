@@ -19,7 +19,7 @@ decorator==5.1.1
 distlib==0.3.7
 dnspython==2.4.2
 docopt==0.6.2
--e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@d39a3d55c85387df8f4801010c564e4b190c74fc#egg=elliptio
+-e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@c5e2c199504e66884b7635ff6975762049462c97#egg=elliptio
 executing==2.0.1
 filelock==3.13.1
 gitdb==4.0.11
@@ -42,6 +42,7 @@ mypy-boto3-lambda==1.28.63
 mypy-boto3-rds==1.28.76
 mypy-boto3-s3==1.28.55
 mypy-boto3-sqs==1.28.36
+mypy-boto3-ssm==1.28.68
 mypy-extensions==1.0.0
 nest-asyncio==1.5.8
 nodeenv==1.8.0

@@ -1,9 +1,14 @@
 # %% get value from URI
 
+import os
+from pathlib import Path
+
 import boto3
+import dotenv
+from pymongo.mongo_client import MongoClient
 
 
-class _SSM_Getter:
+class _SSMGetter:
     def __init__(self) -> None:
         self.ssm = boto3.client("ssm")
 
@@ -12,27 +17,26 @@ class _SSM_Getter:
         return response["Parameter"]["Value"]
 
 
-ssm = _SSM_Getter()
+ssm = _SSMGetter()
 uri_with_options = ssm.get("MONGODB_URI")
 username = ssm.get("MONGODB_USERNAME")
 password = ssm.get("MONGODB_PASSWORD")
 
 # %% Goal: load metadata.yaml and insert into mongoDB
 
-import os
-from pathlib import Path
 
-import dotenv
-from pymongo.mongo_client import MongoClient
+use_local = False
+if use_local:
+    dotenv.load_dotenv()
+    repo_dirpath = Path(__file__).parents[1]
+    terraform_output = dotenv.dotenv_values(
+        dotenv_path=repo_dirpath / "terraform/output.env",
+    )
+    uri_with_options = terraform_output["mongodb_uri_with_options"]
+    username = os.environ["MONGODB_USERNAME"]
+    password = os.environ["MONGODB_PASSWORD"]
 
-# dotenv.load_dotenv()
 
-# repo_dirpath = Path(__file__).parents[1]
-# terraform_output = dotenv.dotenv_values(
-#     dotenv_path=repo_dirpath / "terraform/output.env",
-# )
-
-# uri_with_options = terraform_output["mongodb_uri_with_options"]
 uri = f"mongodb://{username}:{password}@{uri_with_options.removeprefix('mongodb://')}"
 print(uri)
 client = MongoClient(uri)
@@ -58,6 +62,7 @@ for document in cursor:
     print(document)
 
 print("Finished")
+print(type(collection))
 
 # %% create database and collection
 

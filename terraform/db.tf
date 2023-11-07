@@ -10,8 +10,10 @@ resource "mongodbatlas_project" "main" {
 
 resource "mongodbatlas_project_ip_access_list" "example" {
   project_id = mongodbatlas_project.main.id
-  ip_address = local.my_ipv4
-  comment    = "My current IP address"
+  # ip_address = local.my_ipv4
+  # ip_address = "0.0.0.0"
+  # https://github.com/mongodb/terraform-provider-mongodbatlas/issues/864#issuecomment-1272610240
+  cidr_block = "0.0.0.0/0"
 }
 
 
