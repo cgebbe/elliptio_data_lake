@@ -1,32 +1,68 @@
 # More Functional features
 
+## include pandas
+
+```python
+with eio.create(rel_paths="", ...) as artifact:
+  df.to_csv(artifact.file.uri)
+  df2.to_csv(artifact.files["foo.bar"].uri)
+
+  # only write metadata now!
+  # maybe even delete existing ones?
+```
+
 ```python
 import elliptio as eio
 
 eio = elliptio.Handler(
-  save_locally=True,
+  # local requires ROOT_PATH
+  # aws requires credentials, s3_bucket_name
+  storage=["local","aws"],
+  check_storage=True,
+  check_mongodb=True,
   ...
-  monogodb_uri=...
+  # URI is with username and password, so need nothing else
+  monogodb_uri="mongodb://localhost:27017",
 )
 eio.based_on
-artifact = eio.save()
+artifact = eio.upload(["foo.txt","bar.md"])
 
 # CHECK: Does autocompletion work in e.g. JupyterLab? -> yes
+artifact = eio.get(id=...)
 artifact.metadata
-artifact.files["subdir/foo.txt"].download()
-artifact.file.get_bytes()
-artifact.file.s3_url
+local_path = artifact.files["subdir/foo.txt"].download("foo.txt")
+some_bytes = artifact.file.get_bytes()
+artifact.file.uri
 artifact.logs["..."]
-...
+```
 
+## File handlers
+
+- remote_urls_per_local_paths = define_remote_urls(local_paths)
+- upload(local_path, remote_url)
+- download(remote_url, local_path)
+- delete(remote_url)
+- sent_bytes(byte_stream, remote_url)
+- fetch_bytes(remote_url)
+
+AbstractFile
+
+- properties
+  - remote_uri
+- methods
+  - upload(local_path)
+  - download(local_path)
+  - delete()
+  - sent_bytes(byte_stream)
+  - fetch_bytes()
+- classmethod
+  - define_remote_urls(local_paths)
+
+## classes
+
+```python
 @class Metadata:
   version: 0
-
-  def dump():
-    pass
-
-def load_metadata_v0():
-  ...
 
 
 
