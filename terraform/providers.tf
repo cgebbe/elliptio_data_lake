@@ -15,16 +15,13 @@ terraform {
 }
 
 provider "aws" {
-  region     = var.aws_region
-  access_key = var.aws_access_key_id
-  secret_key = var.aws_secret_access_key
+  region     = local.dot_env["AWS_REGION"]
+  access_key = local.dot_env["AWS_ACCESS_KEY_ID"]
+  secret_key = local.dot_env["AWS_SECRET_ACCESS_KEY"]
 }
 
 
 provider "mongodbatlas" {
-  public_key  = var.mongodbatlas_public_key
-  private_key = var.mongodbatlas_private_key
+  public_key  = local.dot_env["MONGODBATLAS_PUBLIC_KEY"]
+  private_key = local.dot_env["MONGODBATLAS_PRIVATE_KEY"]
 }
-
-
-

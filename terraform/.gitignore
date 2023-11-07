@@ -1,0 +1,2 @@
+# I use `terraform output > output.env`
+*.env

@@ -12,7 +12,14 @@ def ls_s3(c):
 
 
 @task
-def check(c):
+def lint(c):
     c.run("pre-commit run --all-files", pty=True)
+
+    # create .env.example, see https://github.com/motdotla/dotenv/issues/119
+    # Alternatively, use `dotenv.dotenv_values()->dict`
+    c.run("sed 's/=.*/=/' .env > .env.example")
+
+    # create `requirements.txt` and lock file (not sure about naming)
     c.run("pipreqs --mode no-pin --savepath requirements.txt src/")
     c.run("pip freeze --verbose > requirements.lock")
+    c.run("python --version > .python-version")
