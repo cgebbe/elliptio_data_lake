@@ -22,3 +22,4 @@ def lint(c):
     # create `requirements.txt` and lock file (not sure about naming)
     c.run("pipreqs --mode no-pin --savepath requirements.txt src/")
     c.run("pip freeze --verbose > requirements.lock")
+    c.run("python --version > .python-version")
