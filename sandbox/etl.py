@@ -32,7 +32,7 @@ for dbname in client.list_database_names():
 collection = client["sample_airbnb"]["listingsAndReviews"]
 
 # Query and list the first 10 documents (rows) from the collection
-cursor = collection.find().limit(3)
+cursor = collection.find().limit(1)
 for document in cursor:
     print(document)
 
