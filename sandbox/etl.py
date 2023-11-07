@@ -1,23 +1,29 @@
 # %% Goal: load metadata.yaml and insert into mongoDB
 
 import os
+from pathlib import Path
 
 import dotenv
 from pymongo.mongo_client import MongoClient
 
 dotenv.load_dotenv()
 
+repo_dirpath = Path(__file__).parents[1]
+terraform_output = dotenv.dotenv_values(
+    dotenv_path=repo_dirpath / "terraform/output.env",
+)
 
-# Create a new client and connect to the server
-uri = os.environ["MONGODB_URI"]
+uri_with_options = terraform_output["mongodb_uri_with_options"]
+uri = f"mongodb://{os.environ['MONGODB_USERNAME']}:{os.environ['MONGODB_PASSWORD']}@{uri_with_options.removeprefix('mongodb://')}"
+print(uri)
 client = MongoClient(uri)
 
 # Send a ping to confirm a successful connection
 client.admin.command("ping")
 print("Pinged your deployment. You successfully connected to MongoDB!")
 
-# %%
 
+print("listing db")
 for dbname in client.list_database_names():
     for collection in client[dbname].list_collection_names():
         print(f"{dbname=}, {collection=}")

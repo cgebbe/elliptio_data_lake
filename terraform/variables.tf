@@ -1,26 +1,20 @@
-# # required variables
-
-# variable "aws_region" {} # eu-central-1
-# variable "aws_secret_access_key" {}
-# variable "aws_access_key_id" {}
-
-# variable "mongodbatlas_public_key" {}
-# variable "mongodbatlas_private_key" {}
-# variable "mongodbatlas_org_id" {}
-
 # see https://stackoverflow.com/a/68833352/2135504
-data "http" "ifconfig_ip" {
-  url = "https://ifconfig.me/ip"
-}
-locals {
-  my_ipv6 = data.http.ifconfig_ip.response_body
-}
+# data "http" "ifconfig_ip" {
+#   url = "https://ifconfig.me/ip"
+# }
+# locals {
+#   my_ipv6 = data.http.ifconfig_ip.response_body
+# }
 
-data "http" "icanhazip" {
+data "http" "ipv4_icanhazip" {
   url = "https://ipv4.icanhazip.com"
 }
+data "http" "ipv6_icanhazip" {
+  url = "https://ipv6.icanhazip.com"
+}
 locals {
-  my_ipv4 = chomp(data.http.icanhazip.response_body)
+  my_ipv4 = chomp(data.http.ipv4_icanhazip.response_body)
+  my_ipv6 = chomp(data.http.ipv6_icanhazip.response_body)
 }
 
 data "aws_caller_identity" "current" {}
@@ -41,7 +35,7 @@ locals {
   app_name = var.app_name == null ? "elliptio" : var.app_name
 }
 
-# from dotenv file
+# specify most variables in dotenv file
 # see https://stackoverflow.com/a/76194380/2135504
 variable "dot_env_file_path" {
   default = "../.env"
