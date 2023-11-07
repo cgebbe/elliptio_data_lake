@@ -8,12 +8,8 @@ from pymongo.mongo_client import MongoClient
 dotenv.load_dotenv()
 
 
-user = "dbuser"
-password = os.environ["MONGODB_PASSWORD"]
-cluster = "main"
-uri = f"mongodb+srv://{user}:{password}@{cluster}.nhmly7n.mongodb.net/?retryWrites=true&w=majority"
-
 # Create a new client and connect to the server
+uri = os.environ["MONGODB_URI"]
 client = MongoClient(uri)
 
 # Send a ping to confirm a successful connection
