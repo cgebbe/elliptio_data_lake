@@ -19,7 +19,7 @@ class Metadata:
     argv: str
     artifact_id: str
     run_id: str
-    creation_time: datetime.datetime
+    creation_time: datetime
     python_packages: dict[str, str]
     # TODO
     # git hash, git diff, ...

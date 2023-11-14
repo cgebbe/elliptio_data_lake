@@ -21,14 +21,14 @@ dotenv.load_dotenv()
 @dataclass
 class Artifact:
     metadata: Metadata
-    files: dict[Path, AbstractFile]
-    logs: dict[Path, AbstractFile]
+    files: dict[str, AbstractFile]
+    logs: dict[str, AbstractFile]
 
 
 class Handler:
     def __init__(self, file_cls: type[AbstractFile]):
         self.File: type[AbstractFile] = file_cls
-        self.run_id = (get_id(prefix="run_"),)
+        self.run_id = get_id(prefix="run_")
 
         # TODO: access collection
         self._collection = _get_mongodb_collection()
@@ -57,7 +57,7 @@ class Handler:
             files[str(relative_path)].upload(lap)
 
         # TODO: upload logs
-        logs = {}
+        logs: dict[str, AbstractFile] = {}
 
         # upload and insert metadata
         metadata_dict = asdict(metadata)
@@ -76,7 +76,7 @@ def _get_mongodb_collection(*, check_connection: bool = True):
     uri = os.environ["MONGODB_FULL_URI"]
     db_name = os.environ["MONGODB_DB_NAME"]
     collection_name = os.environ["MONGODB_COLLECTION_NAME"]
-    client = MongoClient(uri)
+    client: MongoClient = MongoClient(uri)
     if check_connection:
         client.admin.command("ping")
     return client[db_name][collection_name]

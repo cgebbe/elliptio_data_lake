@@ -15,6 +15,9 @@ def ls_s3(c):
 def lint(c):
     c.run("pre-commit run --all-files", pty=True)
 
+    # NOTE: Don't run mypy in precommit to use local venv
+    c.run("mypy src")
+
     # create .env.example, see https://github.com/motdotla/dotenv/issues/119
     # Alternatively, use `dotenv.dotenv_values()->dict`
     c.run("sed 's/=.*/=/' .env > .env.example")

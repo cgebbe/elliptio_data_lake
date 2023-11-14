@@ -46,7 +46,6 @@ exclude = [
 line-length = 88
 indent-width = 4
 
-
 [tool.ruff.lint]
 select = ["ALL"]
 
@@ -78,3 +77,10 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+
+[[tool.mypy.overrides]]
+module = [
+    "assertpy",
+    ]
+ignore_missing_imports = true

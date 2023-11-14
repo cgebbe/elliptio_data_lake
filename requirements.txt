@@ -1,4 +1,6 @@
 assertpy
 boto3
+pymongo
+python-dotenv
 PyYAML
 PyYAML
