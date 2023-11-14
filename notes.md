@@ -1,5 +1,10 @@
 # More Functional features
 
+## TODO
+
+- based_on !!!
+- git-hash
+
 ## include pandas
 
 ```python

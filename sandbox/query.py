@@ -7,6 +7,7 @@ from pathlib import Path
 import boto3
 import dotenv
 import pymongo
+from elliptio.metadata import Metadata
 from pymongo.mongo_client import MongoClient
 
 
@@ -58,9 +59,15 @@ for document in cursor:
     print(document)
 
 # %%
-dct = {"foo": 2, "bar": 4}
+
+dct = collection.find_one(
+    {
+        "artifact_id": "artifact_67cefe12-5f13-4d01-bfb8-f392b8589172",
+    },
+)
 print(dct)
+dct.pop("_id")
 
 
-# %%
-dct["foo"]
+md = Metadata(**dct)
+print(md.creation_time)

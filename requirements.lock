@@ -19,7 +19,7 @@ decorator==5.1.1
 distlib==0.3.7
 dnspython==2.4.2
 docopt==0.6.2
--e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@6cef273e15be806123986614e2e175b61e0f80ed#egg=elliptio
+-e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@8058f85e9dac227780af91cac1c9f22abf963c2a#egg=elliptio
 executing==2.0.1
 filelock==3.13.1
 gitdb==4.0.11
@@ -47,7 +47,10 @@ mypy-boto3-ssm==1.28.68
 mypy-extensions==1.0.0
 nest-asyncio==1.5.8
 nodeenv==1.8.0
+numpy==1.26.2
 packaging==23.2
+pandas==2.1.3
+pandas-stubs==2.1.1.230928
 parso==0.8.3
 pathspec==0.11.2
 pexpect==4.8.0
@@ -62,6 +65,7 @@ Pygments==2.16.1
 pymongo==4.6.0
 python-dateutil==2.8.2
 python-dotenv==1.0.0
+pytz==2023.3.post1
 pyxdg==0.28
 PyYAML==6.0.1
 pyzmq==25.1.1
@@ -74,9 +78,11 @@ stack-data==0.6.3
 tornado==6.3.3
 traitlets==5.13.0
 types-awscrt==0.19.8
+types-pytz==2023.3.1.1
 types-PyYAML==6.0.12.12
 types-s3transfer==0.7.0
 typing_extensions==4.8.0
+tzdata==2023.3
 urllib3==2.0.7
 virtualenv==20.24.6
 wcwidth==0.2.9
