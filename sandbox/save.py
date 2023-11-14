@@ -5,7 +5,7 @@ from pprint import pprint
 import dotenv
 import elliptio as eio
 import git
-from elliptio.filetypes import S3File
+from elliptio.filetypes import LocalFile
 
 repo = git.Repo(Path(__file__), search_parent_directories=True)
 repo_path = Path(repo.working_tree_dir)
@@ -15,8 +15,9 @@ print(paths)
 # %%%
 dotenv.load_dotenv()
 
+use_local = True
 handler = eio.Handler(
-    file_cls=S3File,
+    file_cls=LocalFile,
 )
 
 # %%
