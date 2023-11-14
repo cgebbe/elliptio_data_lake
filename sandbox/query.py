@@ -27,7 +27,7 @@ password = ssm.get("MONGODB_PASSWORD")
 # %% Goal: load metadata.yaml and insert into mongoDB
 
 
-use_local = False
+use_local = True
 if use_local:
     dotenv.load_dotenv()
     repo_dirpath = Path(__file__).parents[1]
@@ -40,6 +40,7 @@ if use_local:
 
 
 uri = f"mongodb://{username}:{password}@{uri_with_options.removeprefix('mongodb://')}"
+uri = "mongodb://dbuser:ThisIsAnUnbreakablePassword123@ac-0bq9e4f-shard-00-00.nhmly7n.mongodb.net:27017,ac-0bq9e4f-shard-00-01.nhmly7n.mongodb.net:27017,ac-0bq9e4f-shard-00-02.nhmly7n.mongodb.net:27017/main?ssl=true&authSource=admin&replicaSet=atlas-h8aiy7-shard-0"
 print(uri)
 client = MongoClient(uri)
 client.admin.command("ping")
