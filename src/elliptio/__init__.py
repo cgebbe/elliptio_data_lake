@@ -1,5 +1,6 @@
-from ._save_func import save
+from ._save_func import Handler, S3File
 
 __all__ = [
-    "save",
+    "Handler",
+    "S3File",
 ]

@@ -1,10 +1,12 @@
 # %%
 
 import os
+import re
 from pathlib import Path
 
 import boto3
 import dotenv
+import pymongo
 from pymongo.mongo_client import MongoClient
 
 
@@ -43,8 +45,6 @@ client = MongoClient(uri)
 client.admin.command("ping")
 # %%
 
-import pymongo
-import re
 
 collection = client["main"]["main"]
 sort_order = [("timestamp_field", pymongo.DESCENDING)]  # Replace with your field name
@@ -58,7 +58,7 @@ for document in cursor:
 
 # %%
 dct = {"foo": 2, "bar": 4}
-dct
+print(dct)
 
 
 # %%

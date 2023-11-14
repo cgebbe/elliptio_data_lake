@@ -14,11 +14,18 @@ print(paths)
 # %%%
 dotenv.load_dotenv()
 
-artifact = eio.save(paths)
+handler = eio.Handler(
+    file_cls=eio.S3File,
+)
 
 # %%
+artifact = handler.upload(
+    local_paths=paths,
+)
 
 print("saved artifact:")
 pprint(artifact)
 
 # %%
+
+print(artifact.files["a.txt"])

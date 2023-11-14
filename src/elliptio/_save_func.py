@@ -4,8 +4,9 @@ import functools
 import getpass
 import importlib.metadata
 import os
+import sys
 import uuid
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from typing import Iterable
@@ -15,52 +16,94 @@ import yaml
 from assertpy import assert_that, soft_assertions
 
 
-@dataclass
-class File:
-    s3_url: PurePosixPath
+class S3File:
+    _bucket = None
 
+    def __init__(self, remote_url: Path) -> None:
+        self.remote_url = remote_url
+        self._init_class()
 
-def save(items: Iterable[os.PathLike]):
-    with soft_assertions():
-        for i in items:
-            assert_that(str(i)).exists().is_file()
+    @classmethod
+    def _init_class(cls):
+        if cls._bucket is not None:
+            return
+        s3 = boto3.resource("s3")
+        bucket_name = os.environ["S3_BUCKET_NAME"]
+        cls._bucket = s3.Bucket(bucket_name)
 
-    # init bucket handle
-    s3 = boto3.resource("s3")
-    bucket_name = os.environ["S3_BUCKET_NAME"]
-    bucket = s3.Bucket(bucket_name)
-    s3_base_path = _get_s3_base_path()
-
-    # add files
-    paths = [Path(i).resolve() for i in items]
-    common_parent = os.path.commonprefix(paths)
-    assert_that(common_parent).is_directory()
-    for p in paths:
-        bucket.upload_file(
-            Filename=str(p),
-            Key=str(s3_base_path / "files" / p.relative_to(common_parent)),
+    def upload(self, local_path):
+        self._bucket.upload_file(
+            Filename=local_path,
+            Key=str(self.remote_url),
         )
 
-    # add metadata
-    metadata = _get_metadata()
-    metadata["files"] = [str(p.relative_to(common_parent)) for p in paths]
-    metadata["s3_base_path"] = str(s3_base_path)
-    yaml_string = yaml.safe_dump(metadata)
-    s3.Object(
-        bucket_name=bucket_name,
-        key=str(s3_base_path / "metadata.yaml"),
-    ).put(Body=yaml_string)
+    def upload_string(self, s: str):
+        self._bucket.Object(key=str(self.remote_url)).put(Body=s)
 
-    return metadata
+    def download(self, local_path):
+        self._bucket.download_file(
+            Key=str(self.remote_url),
+            Filename=local_path,
+        )
+
+    @classmethod
+    def define_remote_root(cls, metadata: Metadata) -> PurePosixPath:
+        today = metadata.creation_time.strftime("%Y/%m/%d")
+        time = metadata.creation_time.strftime("%H%M%S")
+        return PurePosixPath(
+            f"{today}/{metadata.username}/{time}_{metadata.artifact_id}",
+        )
 
 
-def _get_s3_base_path():
-    now = datetime.now(tz=UTC)
-    today = now.strftime("%Y/%m/%d")
-    time = now.strftime("%H%M%S")
-    unique_id = uuid.uuid4()
-    user = _get_username()
-    return PurePosixPath(f"{today}/{user}/{time}_{unique_id}")
+@dataclass
+class Artifact:
+    metadata: Metadata
+    files: dict[Path, S3File]
+    logs: dict[Path, S3File]
+
+
+class Handler:
+    def __init__(self, file_cls: type[S3File]):
+        self.File: type[S3File] = file_cls
+        self.run_id = (_get_id(prefix="run_"),)
+        # TODO: access collection
+        self.collection = None
+
+    def upload(self, local_paths: Iterable[Path]):
+        with soft_assertions():
+            for i in local_paths:
+                assert_that(str(i)).exists().is_file()
+
+        # define metadata
+        metadata = _get_metadata(run_id=self.run_id)
+
+        # define local and remote root
+        local_abs_paths = [Path(i).resolve() for i in local_paths]
+        local_root = os.path.commonprefix(local_abs_paths)
+        assert_that(local_root).is_directory()
+        remote_root = self.File.define_remote_root(metadata=metadata)
+
+        # TODO: define and upload metadata to database
+        yaml_string = yaml.safe_dump(asdict(metadata))
+        self.File(remote_root / "metadata.yaml").upload_string(yaml_string)
+
+        # TODO: upload logs
+        logs = {}
+
+        # upload files
+        files: dict[str, S3File] = {}
+        for lap in local_abs_paths:
+            relative_path = lap.relative_to(local_root)
+            files[str(relative_path)] = self.File(
+                remote_url=remote_root / "files" / relative_path,
+            )
+            files[str(relative_path)].upload(lap)
+
+        return Artifact(
+            metadata=metadata,
+            files=files,
+            logs=logs,
+        )
 
 
 @functools.lru_cache
@@ -68,12 +111,29 @@ def _get_username():
     return getpass.getuser()
 
 
-def _get_metadata():
-    return {
-        "user": _get_username(),
-        "creation_time": datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S"),
-        "python_packages": _get_python_packages(),
-    }
+@dataclass
+class Metadata:
+    username: str
+    argv: str
+    artifact_id: str
+    run_id: str
+    creation_time: datetime.datetime
+    python_packages: dict[str, str]
+
+
+def _get_metadata(run_id: str) -> Metadata:
+    return Metadata(
+        artifact_id=_get_id(prefix="artifact_"),
+        run_id=run_id,
+        username=_get_username(),
+        argv=" ".join(sys.orig_argv),
+        creation_time=datetime.now(tz=UTC),
+        python_packages=_get_python_packages(),
+    )
+
+
+def _get_id(prefix: str = ""):
+    return f"{prefix}{uuid.uuid4()}"
 
 
 def _get_python_packages():
