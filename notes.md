@@ -2,8 +2,21 @@
 
 ## TODO
 
+- .file property for artifact
+- with handler.new() ...
+
 - based_on !!!
+- (fixed) labels
 - git-hash
+
+- local mongoDB database
+- metabase
+
+MAYBE
+
+- tests?!
+- move terraform into aws
+- separate required envs for terraform and for code?!
 
 ## include pandas
 
