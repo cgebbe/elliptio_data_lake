@@ -1,18 +1,17 @@
+from __future__ import annotations
+
 import os
 import shutil
-from dataclasses import dataclass
+import typing
 from pathlib import Path, PurePosixPath
 
-from assertpy import assert_that
+from elliptio.filetypes import RemoteFileInterface
 
-from elliptio.filetypes import AbstractFile
-from elliptio.metadata import Metadata
+if typing.TYPE_CHECKING:
+    from elliptio.metadata import Metadata
 
 
-@dataclass
-class LocalFile(AbstractFile):
-    remote_url: PurePosixPath
-
+class LocalFile(RemoteFileInterface):
     def upload(self, local_path: Path):
         Path(self.remote_url).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(
@@ -36,8 +35,6 @@ class LocalFile(AbstractFile):
     @classmethod
     def define_remote_root(cls, metadata: Metadata) -> PurePosixPath:
         remote_root = os.environ["ELLIPTIO_LOCAL_ROOT"]
-        assert_that(remote_root).exists().is_directory()
-
         today = metadata.creation_time.strftime("%Y/%m/%d")
         time = metadata.creation_time.strftime("%H%M%S")
         return (

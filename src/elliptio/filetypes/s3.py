@@ -26,7 +26,7 @@ def _get_bucket():
 
 
 @dataclass
-class S3File(interface.AbstractFile):
+class S3File(interface.RemoteFileInterface):
     def upload(self, local_path: Path):
         bucket = _get_bucket()
         bucket.upload_file(

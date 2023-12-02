@@ -1,9 +1,9 @@
-from .interface import AbstractFile
+from .interface import RemoteFileInterface
 from .local import LocalFile
 from .s3 import S3File
 
 __all__ = [
-    "AbstractFile",
+    "RemoteFileInterface",
     "S3File",
     "LocalFile",
 ]

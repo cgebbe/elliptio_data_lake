@@ -59,6 +59,7 @@ ignore = [
     "FIX", # allow FIXMEs
     "S101", # allow asserts
     "PD901", # df is a bad variable name
+    "G004", # allow f-strings in logging
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

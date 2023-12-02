@@ -5,8 +5,11 @@
 - .file property for artifact
 - with handler.new() ...
 
+- setup
+  - local
+  - AWS
 - based_on !!!
-- (fixed) labels
+- (fixed) labels ?!
 - git-hash
 
 - local mongoDB database

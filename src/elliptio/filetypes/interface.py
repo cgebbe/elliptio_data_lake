@@ -6,7 +6,7 @@ from elliptio.metadata import Metadata
 
 
 @dataclass
-class AbstractFile(abc.ABC):
+class RemoteFileInterface(abc.ABC):
     remote_url: PurePosixPath
 
     @abc.abstractmethod

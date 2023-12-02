@@ -31,9 +31,11 @@ class Metadata:
     # env-vars (optional due to passwords!)
 
     # TO BE FILLED LATER
+    based_on: Iterable[str] = ()
     remote_root: str = ""
-    files: Iterable[str] = ()
-    logs: Iterable[str] = ()
+    local_root: str = ""
+    file_relpaths: Iterable[str] = ()
+    log_relpaths: Iterable[str] = ()
 
     # Likely useful for loading different metadata versions later on
     version: int = 1
