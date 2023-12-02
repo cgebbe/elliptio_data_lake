@@ -2,13 +2,9 @@
 
 ## TODO
 
-- .file property for artifact
-- with handler.new() ...
-
 - setup
   - local
   - AWS
-- based_on !!!
 - (fixed) labels ?!
 - git-hash
 

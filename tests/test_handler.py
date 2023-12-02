@@ -1,12 +1,13 @@
 import time
-from dataclasses import asdict
+from dataclasses import asdict, fields
 from datetime import UTC, timedelta
 from pathlib import Path
 
+import mongomock
 import pandas as pd
 import pytest
 from assertpy import assert_that, soft_assertions
-from elliptio import Handler, LocalFile
+from elliptio import Handler, Labels, LocalFile
 
 
 @pytest.fixture()
@@ -20,12 +21,24 @@ def local_dirpath(tmp_path):
 @pytest.fixture()
 def handler(monkeypatch, tmp_path):
     monkeypatch.setenv("ELLIPTIO_LOCAL_ROOT", tmp_path)
-    return Handler(remote_file_cls=LocalFile)
+    return Handler(
+        remote_file_cls=LocalFile,
+        collection=mongomock.MongoClient().db.collection,
+    )
 
 
 def test_upload(handler: Handler, local_dirpath):
     artifact = handler.upload(local_paths=local_dirpath.glob("**/*.*"))
     _check_artifact(artifact)
+
+
+def test_upload_with_labels(handler: Handler, local_dirpath):
+    dct = {f.name: f"my_{f.name}" for f in fields(Labels)}
+    artifact = handler.upload(
+        local_paths=local_dirpath.glob("**/*.*"),
+        labels=Labels(**dct),
+    )
+    assert_that(asdict(artifact.metadata.labels)).is_equal_to(dct)
 
 
 def _check_artifact(artifact):
@@ -80,8 +93,5 @@ def _compare_metadat_dicts(org: dict, act: dict):
             if k == "creation_time":
                 delta = abs(org[k] - act[k].replace(tzinfo=UTC))
                 assert_that(delta).is_less_than(timedelta(seconds=1))
-            elif k == "log_relpaths":
-                # Problem: org[k] is a tuple
-                assert_that(list(org[k])).is_equal_to(act[k])
             else:
                 assert_that(org[k]).is_equal_to(act[k])

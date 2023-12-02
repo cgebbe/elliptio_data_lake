@@ -19,7 +19,7 @@ decorator==5.1.1
 distlib==0.3.7
 dnspython==2.4.2
 docopt==0.6.2
--e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@a78f2102a4ef5fe3cccfbacdd8ec9404c3e0aeac#egg=elliptio
+-e git+ssh://git@github.com/cgebbe/elliptio_data_lake.git@f3e883fc83d64f5b281f08871ae440f3da9617bc#egg=elliptio
 executing==2.0.1
 filelock==3.13.1
 gitdb==4.0.11
@@ -36,6 +36,7 @@ jmespath==1.0.1
 jupyter_client==8.5.0
 jupyter_core==5.5.0
 matplotlib-inline==0.1.6
+mongomock==4.1.2
 mypy==1.7.0
 mypy-boto3-cloudformation==1.28.64
 mypy-boto3-dynamodb==1.28.73
@@ -77,6 +78,7 @@ pyzmq==25.1.1
 requests==2.31.0
 ruff==0.1.4
 s3transfer==0.7.0
+sentinels==1.0.0
 six==1.16.0
 smmap==5.0.1
 stack-data==0.6.3

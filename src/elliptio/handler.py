@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Iterable, Iterator
 
 import dotenv
 import pandas as pd
-import pymongo
+import pymongo.collection
 import toolz
 import yaml
 from assertpy import assert_that, soft_assertions
@@ -17,7 +17,7 @@ from pymongo.mongo_client import MongoClient
 
 if TYPE_CHECKING:
     from elliptio.filetypes import RemoteFileInterface
-from elliptio.metadata import Metadata, get_id, get_metadata
+from elliptio.metadata import Labels, Metadata, get_id, get_metadata
 
 dotenv.load_dotenv()
 
@@ -78,19 +78,30 @@ class Artifact:
 
 
 class Handler:
-    def __init__(self, remote_file_cls: type[RemoteFileInterface]):
+    def __init__(
+        self,
+        remote_file_cls: type[RemoteFileInterface],
+        collection: pymongo.collection.Collection | None = None,
+    ):
         self.Remote_File: type[RemoteFileInterface] = remote_file_cls
-        self._collection = _get_mongodb_collection()
+        self._collection = (
+            collection if collection is not None else _get_mongodb_collection()
+        )
 
         self.run_id = get_id(prefix="run_")
         self.based_on: list[str] = []
 
-    def upload(self, local_paths: Iterable[Path]) -> Artifact:
+    def upload(
+        self,
+        local_paths: Iterable[Path],
+        labels: Labels | None = None,
+    ) -> Artifact:
         # Problem: If local_paths is generator (like Path().glob()), we exhaust it.
         # Solution: Convert it to a list.
         local_paths = list(local_paths)
         metadata = self._create_metadata(
             relative_paths=_convert_to_relative_paths(local_paths=local_paths),
+            labels=labels,
         )
 
         with soft_assertions():
@@ -108,8 +119,13 @@ class Handler:
         self._insert_metadata(metadata)
         return self._create_artifact(metadata)
 
-    def _create_metadata(self, relative_paths: list[str]) -> Metadata:
+    def _create_metadata(
+        self,
+        relative_paths: list[str],
+        labels: Labels | None,
+    ) -> Metadata:
         metadata = get_metadata(run_id=self.run_id)
+        metadata.labels = labels if labels is not None else Labels()
         metadata.based_on = self.based_on.copy()
         metadata.remote_root = str(
             self.Remote_File.define_remote_root(metadata=metadata),
@@ -136,8 +152,15 @@ class Handler:
         )
 
     @contextmanager
-    def new(self, relative_paths: list[str]) -> Iterator[Artifact]:
-        metadata = self._create_metadata(relative_paths=relative_paths)
+    def new(
+        self,
+        relative_paths: list[str],
+        labels: Labels | None = None,
+    ) -> Iterator[Artifact]:
+        metadata = self._create_metadata(
+            relative_paths=relative_paths,
+            labels=labels,
+        )
         yield self._create_artifact(metadata)
         # TODO: check that remote files are created ?!
         self._insert_metadata(metadata)

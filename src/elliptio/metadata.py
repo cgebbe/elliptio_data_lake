@@ -6,13 +6,22 @@ import importlib.metadata
 import socket
 import sys
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Iterable
 
 import dotenv
 
 dotenv.load_dotenv()
+
+
+@dataclass
+class Labels:
+    datatype: str = ""
+    ticket: str = ""
+    project: str = ""
+    dataset: str = ""
+    description: str = ""
+    infos: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -30,12 +39,13 @@ class Metadata:
     # machine hostname (IP-address?)
     # env-vars (optional due to passwords!)
 
-    # TO BE FILLED LATER
-    based_on: Iterable[str] = ()
+    # To be filled later
+    based_on: list[str] = field(default_factory=list)
+    labels: Labels = field(default_factory=Labels)
     remote_root: str = ""
     local_root: str = ""
-    file_relpaths: Iterable[str] = ()
-    log_relpaths: Iterable[str] = ()
+    file_relpaths: list[str] = field(default_factory=list)
+    log_relpaths: list[str] = field(default_factory=list)
 
     # Likely useful for loading different metadata versions later on
     version: int = 1
