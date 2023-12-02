@@ -84,5 +84,6 @@ line-ending = "auto"
 [[tool.mypy.overrides]]
 module = [
     "assertpy",
+    "toolz",
     ]
 ignore_missing_imports = true

@@ -17,7 +17,7 @@ dotenv.load_dotenv()
 
 use_local = True
 handler = eio.Handler(
-    file_cls=LocalFile,
+    remote_file_cls=LocalFile,
 )
 
 # %%

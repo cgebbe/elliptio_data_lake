@@ -12,12 +12,16 @@ if typing.TYPE_CHECKING:
 
 
 class LocalFile(RemoteFileInterface):
+    def exists(self) -> bool:
+        return Path(self.remote_url).exists()
+
     def upload(self, local_path: Path):
         Path(self.remote_url).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(
             src=local_path,
             dst=self.remote_url,
         )
+        print("done")
 
     def download(self, local_path: Path):
         shutil.copy2(

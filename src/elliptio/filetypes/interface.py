@@ -10,6 +10,10 @@ class RemoteFileInterface(abc.ABC):
     remote_url: PurePosixPath
 
     @abc.abstractmethod
+    def exists(self) -> bool:
+        pass
+
+    @abc.abstractmethod
     def upload(self, local_path: Path):
         pass
 

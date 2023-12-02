@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Iterable, Iterator
 import dotenv
 import pandas as pd
 import pymongo
+import toolz
 import yaml
 from assertpy import assert_that, soft_assertions
 from pymongo.mongo_client import MongoClient
@@ -24,11 +25,24 @@ dotenv.load_dotenv()
 _LOGGER = logging.getLogger(__name__)
 
 
+class DocumentNotFoundError(Exception):
+    def __init__(self, artifact_id: str) -> None:
+        super().__init__(f"Could not find a document with {artifact_id=}.")
+
+
 @dataclass
 class Artifact:
     metadata: Metadata
     files: dict[str, RemoteFileInterface]
     logs: dict[str, RemoteFileInterface]
+
+    @property
+    def file(self) -> RemoteFileInterface:
+        file_count = len(self.files)
+        if file_count != 1:
+            msg = f".file() only works if artifact has {file_count=} of 1."
+            raise KeyError(msg)
+        return toolz.first(self.files.values())
 
     @classmethod
     def from_metadata(
@@ -63,43 +77,44 @@ class Artifact:
         )
 
 
-class DocumentNotFoundError(Exception):
-    def __init__(self, artifact_id: str) -> None:
-        super().__init__(f"Could not find a document with {artifact_id=}.")
-
-
 class Handler:
-    def __init__(self, file_cls: type[RemoteFileInterface]):
-        self.Remote_File: type[RemoteFileInterface] = file_cls
+    def __init__(self, remote_file_cls: type[RemoteFileInterface]):
+        self.Remote_File: type[RemoteFileInterface] = remote_file_cls
         self._collection = _get_mongodb_collection()
 
         self.run_id = get_id(prefix="run_")
         self.based_on: list[str] = []
 
     def upload(self, local_paths: Iterable[Path]) -> Artifact:
-        metadata = self._create_metadata(local_paths=local_paths)
+        # Problem: If local_paths is generator (like Path().glob()), we exhaust it.
+        # Solution: Convert it to a list.
+        local_paths = list(local_paths)
+        metadata = self._create_metadata(
+            relative_paths=_convert_to_relative_paths(local_paths=local_paths),
+        )
 
         with soft_assertions():
-            for i in local_paths:
-                assert_that(str(i)).exists().is_file()
-        for relpath, local_path in zip(metadata.file_relpaths, local_paths):
+            for p in local_paths:
+                assert_that(str(p)).exists().is_file()
+
+        for relpath, p in zip(metadata.file_relpaths, local_paths):
             remote_url = _get_remote_url(
                 remote_root=metadata.remote_root,
                 relative_path=relpath,
                 dirname="files",
             )
-            self.Remote_File(remote_url=remote_url).upload(local_path)
+            self.Remote_File(remote_url=remote_url).upload(p)
 
         self._insert_metadata(metadata)
         return self._create_artifact(metadata)
 
-    def _create_metadata(self, local_paths: Iterable[Path]) -> Metadata:
+    def _create_metadata(self, relative_paths: list[str]) -> Metadata:
         metadata = get_metadata(run_id=self.run_id)
-        metadata.based_on = self.based_on
+        metadata.based_on = self.based_on.copy()
         metadata.remote_root = str(
             self.Remote_File.define_remote_root(metadata=metadata),
         )
-        metadata.file_relpaths = _convert_to_relative_paths(local_paths=local_paths)
+        metadata.file_relpaths = relative_paths
         # TODO: create and upload log files
         return metadata
 
@@ -121,8 +136,8 @@ class Handler:
         )
 
     @contextmanager
-    def new(self, local_paths: Iterable[Path]) -> Iterator[Artifact]:
-        metadata = self._create_metadata(local_paths=local_paths)
+    def new(self, relative_paths: list[str]) -> Iterator[Artifact]:
+        metadata = self._create_metadata(relative_paths=relative_paths)
         yield self._create_artifact(metadata)
         # TODO: check that remote files are created ?!
         self._insert_metadata(metadata)
@@ -149,9 +164,10 @@ class Handler:
             "artifact_id",
             "creation_time",
             "username",
-            "files",
+            "file_relpaths",
             "argv",
         ]
+        assert_that(first_columns).is_subset_of(df.columns)
         subsequent_columns = set(df.columns).difference(first_columns)
         df = df[first_columns + sorted(subsequent_columns)]
         return df.set_index("artifact_id")
@@ -173,7 +189,7 @@ class Handler:
 
 def _convert_to_relative_paths(local_paths: Iterable[Path]) -> list[str]:
     local_abs_paths = [Path(i).resolve() for i in local_paths]
-    local_root = os.path.commonprefix(local_abs_paths)
+    local_root = os.path.commonprefix([p.parent for p in local_abs_paths])
     assert_that(local_root).is_directory()
 
     return [str(p.relative_to(local_root)) for p in local_abs_paths]

@@ -5,7 +5,7 @@ import pandas as pd
 import pymongo
 from elliptio import Handler, LocalFile
 
-eio = Handler(file_cls=LocalFile)
+eio = Handler(remote_file_cls=LocalFile)
 
 # %%
 
