@@ -21,7 +21,6 @@ class LocalFile(RemoteFileInterface):
             src=local_path,
             dst=self.remote_url,
         )
-        print("done")
 
     def download(self, local_path: Path):
         shutil.copy2(
@@ -41,7 +40,12 @@ class LocalFile(RemoteFileInterface):
         remote_root = os.environ["ELLIPTIO_LOCAL_ROOT"]
         today = metadata.creation_time.strftime("%Y/%m/%d")
         time = metadata.creation_time.strftime("%H%M%S")
-        return (
+
+        artifact_root = (
             PurePosixPath(remote_root)
             / f"{today}/{metadata.username}/{time}_{metadata.artifact_id}"
         )
+
+        # TODO: This is an ugly hack for the LocalFile class, not necessary for S3.
+        Path(artifact_root / "files").mkdir(exist_ok=True, parents=True)
+        return artifact_root

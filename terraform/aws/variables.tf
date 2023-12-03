@@ -1,11 +1,3 @@
-# see https://stackoverflow.com/a/68833352/2135504
-# data "http" "ifconfig_ip" {
-#   url = "https://ifconfig.me/ip"
-# }
-# locals {
-#   my_ipv6 = data.http.ifconfig_ip.response_body
-# }
-
 data "http" "ipv4_icanhazip" {
   url = "https://ipv4.icanhazip.com"
 }
@@ -38,7 +30,7 @@ locals {
 # specify most variables in dotenv file
 # see https://stackoverflow.com/a/76194380/2135504
 variable "dot_env_file_path" {
-  default = "../.env"
+  default = "../../.env"
 }
 locals {
   dot_env_regex = "(?m:^\\s*([^#\\s]\\S*)\\s*=\\s*[\"']?(.*[^\"'\\s])[\"']?\\s*$)"

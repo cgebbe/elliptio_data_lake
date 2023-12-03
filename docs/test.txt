@@ -1,0 +1,3 @@
+path, class
+/path/to/image0.png, 0
+/path/to/image1.png, 1

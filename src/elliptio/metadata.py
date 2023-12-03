@@ -6,8 +6,10 @@ import importlib.metadata
 import socket
 import sys
 import uuid
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from unittest.mock import patch
 
 import dotenv
 
@@ -85,3 +87,10 @@ def _get_python_packages():
     - `pkg_resources`: deprecated in favor of importlib.resources or importlib.metadata
     """
     return {d.name: d.version for d in importlib.metadata.distributions()}
+
+
+@contextmanager
+def mock_username(username):
+    with patch("elliptio.metadata._get_username") as mock:
+        mock.return_value = username
+        yield

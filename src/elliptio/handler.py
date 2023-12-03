@@ -106,7 +106,7 @@ class Handler:
 
         with soft_assertions():
             for p in local_paths:
-                assert_that(str(p)).exists().is_file()
+                assert_that(str(p)).is_file()
 
         for relpath, p in zip(metadata.file_relpaths, local_paths):
             remote_url = _get_remote_url(
@@ -157,6 +157,7 @@ class Handler:
         relative_paths: list[str],
         labels: Labels | None = None,
     ) -> Iterator[Artifact]:
+        assert_that(relative_paths).is_instance_of(list)
         metadata = self._create_metadata(
             relative_paths=relative_paths,
             labels=labels,
@@ -183,6 +184,9 @@ class Handler:
         dct_list = list(cursor)
 
         df = pd.DataFrame(dct_list)
+        if len(df) == 0:
+            return df
+
         first_columns = [
             "artifact_id",
             "creation_time",
