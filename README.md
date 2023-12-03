@@ -27,9 +27,9 @@ Particular in data science you often find data lakes where...
 | data cannot be reproduced      | [Automatically log](https://docs.wandb.ai/guides/track/log#automatically-logged-data) required information.                     |
 | data lineage is unknown        | [Automatically track](https://docs.wandb.ai/guides/artifacts/explore-and-traverse-an-artifact-graph) lineage between artifacts. |
 | data is accidentally modified  | Lock files using S3 lock.                                                                                                       |
-| data is duplicated             | Automatically replace duplicated files with references                                                                          |
 | data has no metadata           | Users can specify custom metadata as dict when saving files.                                                                    |
 | directory structure is chaotic | Simply save files by date and user. A good metadata search makes structure much less important.                                 |
+| data is duplicated             | Automatically replace duplicated files with references (not yet implemented)                                                    |
 
 # Functional specification / User stories
 
