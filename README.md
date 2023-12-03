@@ -80,7 +80,8 @@ Metabase, without the enterprise features, is APGL licensed. You have to be care
 
 ## TODOs
 
-- Use ![fsspec](https://github.com/fsspec) as file system interface
+- Use [fsspec](https://github.com/fsspec) as file system interface
+- compare with other data versioning tools from https://github.com/EthicalML/awesome-production-machine-learning/ (and other reproducibility tools)
 - automatically log git-hash and `git diff`
 - Publish elliptio to pypi
 - tests for different filesystems
