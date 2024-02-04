@@ -1,17 +1,18 @@
-from elliptio.interfaces import TrackerInterface, AutomaticMetadata
 import datetime
 import functools
-import socket
 import getpass
 import importlib
+import socket
 import sys
+
+from elliptio.interfaces import AutomaticMetadata, TrackerInterface
 
 
 class Tracker(TrackerInterface):
     def get_automatic_metadata(self) -> AutomaticMetadata:
         return AutomaticMetadata(
             run_id="random_id",
-            creation_time=datetime.datetime.now(),
+            creation_time=datetime.datetime.now(tz=datetime.UTC),
             argv=" ".join(sys.orig_argv),
             username=_get_username(),
             hostname=_get_hostname(),

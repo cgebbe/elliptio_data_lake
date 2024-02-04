@@ -1,14 +1,18 @@
+from __future__ import annotations
+
 import abc
-from typing import Iterable
-import os
-from dataclasses import dataclass, field
-import datetime
-from pathlib import Path
-import pandas as pd
+import typing
+
+if typing.TYPE_CHECKING:
+    import datetime
+
+    import pandas as pd
+
+from dataclasses import dataclass
 
 
 class ID(str):
-    pass
+    __slots__ = ()
 
 
 @dataclass
@@ -52,15 +56,17 @@ class FileInfo:
 @dataclass
 class FileSystemInterface(abc.ABC):
     def define_prefix(self, amd: AutomaticMetadata) -> str:
-        os.path.join(
-            amd.creation_time.year,
-            amd.creation_time.month,
-            amd.creation_time.day,
-            amd.username,
+        return "/".join(  # noqa: FLY002
+            [
+                amd.creation_time.year,
+                amd.creation_time.month,
+                amd.creation_time.day,
+                amd.username,
+            ],
         )
 
     def define_remote_url(self, prefix: str, relpath: str) -> str:
-        return os.path.join(prefix, relpath)
+        return prefix + "/" + relpath
 
     @abc.abstractmethod
     def upload(self, local_path: str, remote_url: str) -> None:

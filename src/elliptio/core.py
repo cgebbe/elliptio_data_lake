@@ -1,17 +1,22 @@
-from typing import Iterable
+from __future__ import annotations
+
+import contextlib
+import typing
+from dataclasses import asdict, dataclass, field
+
+if typing.TYPE_CHECKING:
+    import pandas as pd
+
 from .interfaces import (
-    AutomaticMetadata,
-    ManualMetadata,
     ID,
+    AutomaticMetadata,
+    DataBaseInterface,
     File,
     FileSystemInterface,
-    DataBaseInterface,
-    TrackerInterface,
     IdCreatorInterface,
+    ManualMetadata,
+    TrackerInterface,
 )
-import pandas as pd
-from dataclasses import dataclass, field, asdict
-import contextlib
 
 
 @dataclass

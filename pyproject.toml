@@ -148,4 +148,3 @@ lint = "pre-commit run --all-files"
 test = "pytest -vv src"
 publish.cmd = "pdm publish -v -r pypi -u __token__ -P ${PYPI_TOKEN}"
 publish.env_file = ".env"
-
