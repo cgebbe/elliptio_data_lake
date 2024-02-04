@@ -36,6 +36,7 @@ class ManualMetadata:
     datatype: str = ""
     dataset: str = ""
     description: str = ""
+    config: str = ""  # e.g. as json or as text
 
 
 @dataclass
