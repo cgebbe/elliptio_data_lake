@@ -12,7 +12,7 @@ def fs():
 
 @pytest.fixture()
 def local_path(tmp_path: Path):
-    local_path = tmp_path / "local.txt"
+    local_path = tmp_path / "fs_test.txt"
     local_path.write_text("foo")
     return str(local_path)
 

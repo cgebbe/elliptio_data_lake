@@ -57,16 +57,14 @@ class FileInfo:
 
 @dataclass
 class FileSystemInterface(abc.ABC):
-    def define_prefix(self, amd: AutomaticMetadata) -> str:
-        return (
-            f"{amd.creation_time.year}"
-            f"/{amd.creation_time.month}"
-            f"/{amd.creation_time.day}"
-            f"/{amd.username}"
-        )
-
-    def define_remote_url(self, prefix: str, relpath: str) -> str:
-        return prefix + "/" + relpath
+    @abc.abstractmethod
+    def define_remote_url(
+        self,
+        amd: AutomaticMetadata,
+        file_id: ID,
+        relpath: str,
+    ) -> str:
+        pass
 
     @abc.abstractmethod
     def upload(self, local_path: str, remote_url: str) -> None:
@@ -131,13 +129,14 @@ class DataBaseInterface(abc.ABC):
         pass
 
 
-class TrackerInterface(abc.ABC):
-    @abc.abstractmethod
-    def get_automatic_metadata(self) -> AutomaticMetadata:
-        pass
-
-
 class IdCreatorInterface(abc.ABC):
     @abc.abstractmethod
     def create_unique_id(self, prefix: str = "") -> ID:
+        pass
+
+
+@dataclass
+class TrackerInterface(abc.ABC):
+    @abc.abstractmethod
+    def get_automatic_metadata(self) -> AutomaticMetadata:
         pass

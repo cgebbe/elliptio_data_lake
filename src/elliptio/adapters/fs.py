@@ -2,23 +2,44 @@ import hashlib
 
 import fsspec
 
-from elliptio.interfaces import FileSystemInterface
+from elliptio.interfaces import ID, AutomaticMetadata, FileSystemInterface
 
 
 class FsspecFilesys(FileSystemInterface):
-    def __init__(self, protocol="file", **storage_options) -> None:
+    def __init__(self, prefix: str, protocol="file", **storage_options) -> None:
         self.fs: fsspec.AbstractFileSystem = fsspec.filesystem(
             protocol,
             **storage_options,
         )
+        self.prefix = prefix
+
+    def define_remote_url(
+        self,
+        amd: AutomaticMetadata,
+        file_id: ID,
+        relpath: str,
+    ) -> str:
+        return self.fs.sep.join(
+            [
+                self.prefix,
+                str(amd.creation_time.year),
+                str(amd.creation_time.month),
+                str(amd.creation_time.day),
+                str(amd.username),
+                file_id,
+                relpath,
+            ],
+        )
 
     def upload(self, local_path: str, remote_url: str) -> None:
+        self.fs.mkdirs(self.fs._parent(remote_url), exist_ok=True)  # noqa: SLF001
         self.fs.put(lpath=local_path, rpath=remote_url)
 
     def download(self, remote_url: str, local_path: str) -> None:
         self.fs.get(rpath=remote_url, lpath=local_path)
 
     def write_text(self, remote_url: str, text: str) -> None:
+        self.fs.mkdirs(self.fs._parent(remote_url), exist_ok=True)  # noqa: SLF001
         with self.fs.open(remote_url, "w") as f:
             f.write(text)
 
