@@ -11,7 +11,9 @@
 
 # About
 
-ElliptIO is an opinionated application (idea) on how to store and access files in data lakes.
+![](README.assets/2024-01-29-23-44-57.png)
+
+ElliptIO is an opionated python library for storing and accessing files in data lakes in a data science context. It stores files including automatically generated metadata on any file system and inserts metada into a MongoDB. A lot of inspiration is drawn from [Weights & Biases](https://github.com/wandb/wandb).
 
 It is named after the Elliptio mussel genus which lives in freshwater lakes.
 
