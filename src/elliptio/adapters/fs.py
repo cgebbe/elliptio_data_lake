@@ -1,12 +1,15 @@
-from elliptio.interfaces import FileSystemInterface
-import fsspec
 import hashlib
+
+import fsspec
+
+from elliptio.interfaces import FileSystemInterface
 
 
 class FsspecFilesys(FileSystemInterface):
     def __init__(self, protocol="file", **storage_options) -> None:
         self.fs: fsspec.AbstractFileSystem = fsspec.filesystem(
-            protocol, **storage_options
+            protocol,
+            **storage_options,
         )
 
     def upload(self, local_path: str, remote_url: str) -> None:
@@ -24,7 +27,7 @@ class FsspecFilesys(FileSystemInterface):
             return r.read()
 
     def get_hash(self, remote_url: str) -> str:
-        hasher = hashlib.md5()
+        hasher = hashlib.sha256()
         with self.fs.open(remote_url, "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 hasher.update(chunk)

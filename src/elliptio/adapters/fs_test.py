@@ -1,14 +1,16 @@
-from elliptio.adapters.fs import FsspecFilesys, FileSystemInterface
 from pathlib import Path
+
 import pytest
 
+from elliptio.adapters.fs import FileSystemInterface, FsspecFilesys
 
-@pytest.fixture
+
+@pytest.fixture()
 def fs():
     return FsspecFilesys("local")
 
 
-@pytest.fixture
+@pytest.fixture()
 def local_path(tmp_path: Path):
     local_path = tmp_path / "local.txt"
     local_path.write_text("foo")
@@ -35,8 +37,9 @@ def test_write_read_text(fs: FileSystemInterface, tmp_path: Path):
 
 
 def test_hash(fs: FileSystemInterface, local_path: str):
-    assert fs.get_hash(local_path) == "acbd18db4cc2f85cedef654fccc4a4d8"
+    expected_hash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+    assert fs.get_hash(local_path) == expected_hash
 
 
 def test_get_byte_size(fs: FileSystemInterface, local_path: str):
-    assert fs.get_byte_size(local_path) == 3
+    assert fs.get_byte_size(local_path) == 3  # noqa: PLR2004

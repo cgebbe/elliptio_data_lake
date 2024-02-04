@@ -130,7 +130,9 @@ check = [
   "pandas-stubs"
 ]
 dev = [
-  "ipykernel"
+    "ipykernel",
+    "pudb",
+    "pytest-pudb",
 ]
 # from https://docs.astral.sh/ruff/configuration/
 lint = [

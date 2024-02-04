@@ -21,7 +21,7 @@ class AutomaticMetadata:
     argv: str
     username: str
     hostname: str
-    python_packages: dict[str, str]
+    python_packages: dict[str, str]  # maybe also as JSON string?!
 
     # TODO
     # git hash, git diff, ...
@@ -36,17 +36,18 @@ class ManualMetadata:
     datatype: str = ""
     dataset: str = ""
     description: str = ""
-    config: str = ""  # e.g. as json or as text
+    config: str = ""  # e.g.  JSON or YAML string
 
 
 @dataclass
 class FileInfo:
-    run_id: ID
     file_id: ID
+    run_id: ID
     relpath: str
     remote_url: str
     file_hash: str
     byte_size: int
+
     automatic_metadata: AutomaticMetadata
     manual_metadata: ManualMetadata
 
@@ -124,7 +125,7 @@ class DataBaseInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def query(self, dct: dict, **kwargs) -> pd.DataFrame:
+    def query(self, filter_dict: dict | None, **kwargs) -> pd.DataFrame:
         # The dataframe has columns corresponding to FileInfo
         # TODO: Can we create a new type for this, e.g. DataFrame[FileInfo]?
         pass
