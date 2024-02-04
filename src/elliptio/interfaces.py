@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import abc
-import typing
+from typing import TYPE_CHECKING
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     import datetime
 
     import pandas as pd
@@ -17,7 +17,6 @@ class ID(str):
 
 @dataclass
 class AutomaticMetadata:
-    run_id: ID
     creation_time: datetime.datetime
     argv: str
     username: str
@@ -41,6 +40,7 @@ class ManualMetadata:
 
 @dataclass
 class FileInfo:
+    run_id: ID
     file_id: ID
     relpath: str
     remote_url: str
@@ -49,20 +49,18 @@ class FileInfo:
     automatic_metadata: AutomaticMetadata
     manual_metadata: ManualMetadata
 
-    deduplicated_by: ID
+    deduplicated_by: ID | None
     based_on: list[ID]
 
 
 @dataclass
 class FileSystemInterface(abc.ABC):
     def define_prefix(self, amd: AutomaticMetadata) -> str:
-        return "/".join(  # noqa: FLY002
-            [
-                amd.creation_time.year,
-                amd.creation_time.month,
-                amd.creation_time.day,
-                amd.username,
-            ],
+        return (
+            f"{amd.creation_time.year}"
+            f"/{amd.creation_time.month}"
+            f"/{amd.creation_time.day}"
+            f"/{amd.username}"
         )
 
     def define_remote_url(self, prefix: str, relpath: str) -> str:

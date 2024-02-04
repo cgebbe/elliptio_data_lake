@@ -25,7 +25,10 @@ class Handler:
     db: DataBaseInterface
     tracker: TrackerInterface
     id_creator: IdCreatorInterface
-    based_on: field(default_factory=list)
+    based_on: list[ID] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.run_id = self.id_creator.create_unique_id()
 
     @contextlib.contextmanager
     def create(
@@ -38,6 +41,7 @@ class Handler:
         mmd = manual_metadata or ManualMetadata()
         prefix = self.fs.define_prefix(amd)
         file = File(
+            run_id=self.run_id,
             file_id=self.id_creator.create_unique_id(),
             relpath=relpath,
             remote_url=self.fs.define_remote_url(prefix, relpath),
@@ -45,7 +49,7 @@ class Handler:
             byte_size=0,
             automatic_metadata=amd,
             manual_metadata=mmd,
-            deduplicated_by="",
+            deduplicated_by=None,
             based_on=self.based_on,
             fs=self.fs,
         )

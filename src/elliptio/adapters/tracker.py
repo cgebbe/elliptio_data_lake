@@ -1,10 +1,9 @@
-from datetime import datetime
+import datetime
 import functools
 import getpass
 import importlib.metadata
 import socket
 import sys
-
 
 from elliptio.interfaces import AutomaticMetadata, TrackerInterface
 
@@ -12,8 +11,7 @@ from elliptio.interfaces import AutomaticMetadata, TrackerInterface
 class Tracker(TrackerInterface):
     def get_automatic_metadata(self) -> AutomaticMetadata:
         return AutomaticMetadata(
-            run_id="random_id",
-            creation_time=datetime.utcnow(),
+            creation_time=datetime.datetime.now(tz=datetime.timezone.utc),
             argv=" ".join(sys.argv),  # NOTE: before sys.orig_argv using 3.11 ?!
             username=_get_username(),
             hostname=_get_hostname(),
