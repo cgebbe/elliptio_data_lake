@@ -47,8 +47,10 @@ get file (id, fs, db)
 
 deduplicate
 
-- ids_per_hash = db.get_duplicate_files() -> dict[str,str]
--
+- ids_per_hash = db.get_duplicate_files() -> dict[str,ID]
+- for hash, ids:
+  - newest id
+  - for ...
 
 # User story Artifact
 
