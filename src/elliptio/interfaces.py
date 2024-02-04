@@ -137,5 +137,5 @@ class TrackerInterface(abc.ABC):
 
 class IdCreatorInterface(abc.ABC):
     @abc.abstractmethod
-    def create_unique_id(self) -> ID:
+    def create_unique_id(self, prefix: str = "") -> ID:
         pass
