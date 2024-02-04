@@ -1,0 +1,44 @@
+name: branch push workflow
+
+on:
+  push:
+    branches:
+      - '*'  
+    tags-ignore:
+      - '*'  
+
+
+jobs:
+  test_job:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        os: [ubuntu-latest] #, macOS-latest, windows-latest]
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+        with:
+          # NOTE: This seems to be necessary for commitizen to push later on?!
+          token: "${{ secrets.PERSONAL_ACCESS_TOKEN }}"
+          # PROBLEM: by default fetch-depth=1, but then commitizen precommit fails
+          # (TEMPORARY) SOLUTION: fetch whole tree
+          fetch-depth: 0
+      - name: set up PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: test code
+        run: |
+          pdm sync -d -G lint,check,test
+          pdm run lint
+          pdm run check
+          pdm run test
+      # The version bumping (=release) runs only in main after every merge.
+      # CHECKME: This should only run once even if we have multiple strategy matrix entries!
+      # From https://commitizen-tools.github.io/commitizen/tutorials/github_actions/
+      - name: bump version and push
+        if: github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Merge')
+        uses: commitizen-tools/commitizen-action@master
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
