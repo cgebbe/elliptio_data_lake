@@ -1,13 +1,8 @@
-from .filetypes import LocalFile, RemoteFileInterface, S3File
-from .handler import Handler
-from .metadata import Labels, mock_username
+from elliptio.composite import Handler, get_handler
+from elliptio.interfaces import ManualMetadata
 
 __all__ = [
-    "mock_username",
-    "Labels",
+    "get_handler",
     "Handler",
-    "Lablels",
-    "S3File",
-    "LocalFile",
-    "RemoteFileInterface",
+    "ManualMetadata",
 ]

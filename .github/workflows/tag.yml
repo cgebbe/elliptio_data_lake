@@ -1,0 +1,25 @@
+name: tag push workflow
+
+on:
+  push:
+    branches-ignore:
+      - '*'
+    tags:
+      # FIXME: limit it to only version tags
+      - '*' 
+
+jobs:
+  # From https://pdm-project.org/latest/usage/publish/#publish-with-trusted-publishers
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: setup pdm
+        uses: pdm-project/setup-pdm@v3
+      - name: publish
+        run: |
+          pdm publish -v -r pypi -u __token__ -P ${{ secrets.PYPI_TOKEN }}

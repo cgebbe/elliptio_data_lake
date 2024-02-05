@@ -1,19 +1,26 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project]
 name = "elliptio"
 authors = [
-    {name = "Chrisian Gebbe", email = "4158176+cgebbe@users.noreply.github.com"},
+    {name = "Christian Gebbe", email = ""},
 ]
 
-# see https://stackoverflow.com/a/73600610/2135504
-dynamic = ["version", "dependencies"]
+dependencies = [
+    "pandas",
+    "sqlalchemy",
+    "fsspec",
+    "pyyaml",
+]
+description = ""
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+urls = {homepage = "https://github.com/cgebbe/elliptio_data_lake"}
+version = "0.1.0"
 
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
-# optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
 
 # from https://docs.astral.sh/ruff/configuration/
 [tool.ruff]
@@ -47,7 +54,9 @@ line-length = 88
 indent-width = 4
 
 [tool.ruff.lint]
-select = ["ALL"]
+select = [
+    "ALL",
+]
 
 
 ignore = [
@@ -63,7 +72,9 @@ ignore = [
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
+fixable = [
+    "ALL",
+]
 unfixable = []
 
 
@@ -85,5 +96,61 @@ line-ending = "auto"
 module = [
     "assertpy",
     "toolz",
+    "fsspec",
     ]
 ignore_missing_imports = true
+
+
+[tool.commitizen]
+name = "cz_customize"
+tag_format = "$version"
+update_changelog_on_bump = true
+version_provider = "pep621"
+version_scheme = "pep440"
+
+[tool.commitizen.customize]
+# PROBLEM: commitizen only bumps version for BREAKING, feat, fix, refactor, perf
+# SOLUTION: see  https://github.com/commitizen-tools/commitizen/issues/781#issuecomment-1790555405
+bump_map = {feat = "MINOR", fix = "PATCH", ci = "PATCH", build = "PATCH", perf = "PATCH", refactor = "PATCH", 'chore' = "PATCH", 'style' = "PATCH", 'test' = "PATCH", 'docs' = "PATCH"}
+bump_pattern = '^(feat|fix|ci|build|perf|refactor|chore|style|test|docs)'
+schema_pattern = '^(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert|bump|)(\(\S+\))?\:?\s.*'
+
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.build]
+excludes = ["**/*_test.py"]
+
+[tool.pdm.dev-dependencies]
+bump = [
+  "commitizen"
+]
+check = [
+    "mypy",
+    "pandas-stubs",
+    "types-PyYAML",
+]
+dev = [
+    "ipykernel",
+    "pudb",
+    "pytest-pudb",
+    "s3fs",
+]
+# from https://docs.astral.sh/ruff/configuration/
+lint = [
+  "pre-commit"
+]
+test = [
+  "pytest"
+]
+
+[tool.pdm.scripts]
+all = {composite = ["lint", "check", "test"]}
+check = "mypy src"
+# FIXME: Add line ending to `dotenv` command and then add to all
+dotenv = {shell = "sed 's/=.*/=/' .env > .env.example"}
+lint = "pre-commit run --all-files"
+test = "pytest -vv src"
+publish.cmd = "pdm publish -v -r pypi -u __token__ -P ${PYPI_TOKEN}"
+publish.env_file = ".env"
