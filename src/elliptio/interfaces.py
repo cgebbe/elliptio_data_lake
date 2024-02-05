@@ -58,14 +58,22 @@ class FileInfo:
 
     def to_yaml(self):
         dct = asdict(self)
-        _map(dct, lambda s: str(s) if isinstance(s, ID) else s)
+        _deep_map(dct, _convert_ids_to_str)
         return yaml.safe_dump(dct)
 
 
-def _map(nested_dict, func):
+def _convert_ids_to_str(x):
+    if isinstance(x, ID):
+        return str(x)
+    if isinstance(x, list) and len(x) > 0 and isinstance(x[0], ID):
+        return [str(e) for e in x]
+    return x
+
+
+def _deep_map(nested_dict, func):
     for key, value in nested_dict.items():
         if isinstance(value, dict):
-            _map(value, func)
+            _deep_map(value, func)
         else:
             nested_dict[key] = func(value)
 

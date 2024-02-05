@@ -26,6 +26,7 @@ class Handler:
     tracker: TrackerInterface
     id_creator: IdCreatorInterface
     based_on: list[ID] = field(default_factory=list)
+    mmd: ManualMetadata | None = None
 
     def __post_init__(self):
         self.run_id = self.id_creator.create_unique_id(prefix="run")
@@ -34,13 +35,13 @@ class Handler:
     def create(
         self,
         relpath: str,
-        manual_metadata: ManualMetadata | None = None,
         *,
+        manual_metadata: ManualMetadata | None = None,
         automatic_metadata: AutomaticMetadata | None = None,
         save_metadata_to_filesystem: bool = True,
     ) -> Iterator[File]:
         amd = automatic_metadata or self.tracker.get_automatic_metadata()
-        mmd = manual_metadata or ManualMetadata()
+        mmd = manual_metadata or self.mmd or ManualMetadata()
         file_id = self.id_creator.create_unique_id()
         file = File(
             file_id=file_id,
@@ -52,7 +53,7 @@ class Handler:
             automatic_metadata=amd,
             manual_metadata=mmd,
             deduplicated_by=None,
-            based_on=self.based_on,
+            based_on=self.based_on.copy(),
             fs=self.fs,
         )
         yield file
@@ -68,6 +69,7 @@ class Handler:
         file_info = self.db.load(file_id)
         while file_info.deduplicated_by:
             file_info = self.db.load(file_info.deduplicated_by)
+        self.based_on.append(file_info.file_id)
         return File(**asdict(file_info), fs=self.fs)
 
     def query(self, dct: dict | None = None, **kwargs) -> pd.DataFrame:

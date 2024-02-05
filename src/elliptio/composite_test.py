@@ -43,6 +43,16 @@ def test_load(handler: Handler):
     assert dataclasses.asdict(reloaded) == dataclasses.asdict(f)
 
 
+def test_based_on(handler: Handler):
+    with handler.create("first.txt") as f1:
+        f1.write_text("foo")
+    handler.load(f1.file_id)
+
+    with handler.create("second.txt") as f2:
+        f2.write_text("bar")
+    assert f2.based_on == [f1.file_id]
+
+
 def test_query(handler: Handler):
     with handler.create("my/train.txt") as f:
         f.write_text("foo")
