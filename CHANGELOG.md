@@ -1,3 +1,10 @@
+## 0.2.1 (2024-02-05)
+
+
+- Merge pull request #5 from cgebbe/fix-ci-after-big-refactor
+- docs: remove old files
+- docs: remove old files
+
 ## 0.2.0 (2024-02-05)
 
 
