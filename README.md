@@ -72,10 +72,10 @@ Simply run `pip install elliptio`.
 
 ```python
 # Example for passing custom FileSystemInterfaces like S3
-from elliptio.adapters import db, fs
-from elliptio import get_default_handler
+from elliptio.adapters import fs,db
+from elliptio import get_handler
 
-h = get_default_handler(
+h = get_handler(
     fs=fs.FsspecFilesystem(prefix="some/prefix/", protocol="s3", storage_options={}),
     db=db.SqlDatabase("db.sqlite"),
 )
