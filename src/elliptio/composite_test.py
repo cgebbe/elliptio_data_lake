@@ -14,6 +14,18 @@ def test_create_text(handler: Handler):
     assert f.read_text() == "foo"
 
 
+def test_metadata_file_exists(handler: Handler):
+    with handler.create("my/train.txt") as f:
+        f.write_text("foo")
+
+    metadata_path = handler.fs.define_remote_url(
+        f.automatic_metadata,
+        f.file_id,
+        ".metadata.yaml",
+    )
+    assert Path(metadata_path).exists()
+
+
 def test_create_file(handler: Handler, local_path: Path, tmp_path: Path):
     with handler.create("my/train.txt") as f:
         f.upload(str(local_path))

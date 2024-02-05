@@ -8,7 +8,9 @@ if TYPE_CHECKING:
 
     import pandas as pd
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+
+import yaml
 
 
 class ID(str):
@@ -53,6 +55,19 @@ class FileInfo:
 
     deduplicated_by: ID | None
     based_on: list[ID]
+
+    def to_yaml(self):
+        dct = asdict(self)
+        _map(dct, lambda s: str(s) if isinstance(s, ID) else s)
+        return yaml.safe_dump(dct)
+
+
+def _map(nested_dict, func):
+    for key, value in nested_dict.items():
+        if isinstance(value, dict):
+            _map(value, func)
+        else:
+            nested_dict[key] = func(value)
 
 
 @dataclass

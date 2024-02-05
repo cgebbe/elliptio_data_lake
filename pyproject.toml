@@ -12,6 +12,7 @@ dependencies = [
     "pandas",
     "sqlalchemy",
     "fsspec",
+    "pyyaml",
 ]
 description = ""
 license = {text = "MIT"}
@@ -126,8 +127,9 @@ bump = [
   "commitizen"
 ]
 check = [
-  "mypy",
-  "pandas-stubs"
+    "mypy",
+    "pandas-stubs",
+    "types-PyYAML",
 ]
 dev = [
     "ipykernel",

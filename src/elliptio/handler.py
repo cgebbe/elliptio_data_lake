@@ -34,8 +34,10 @@ class Handler:
     def create(
         self,
         relpath: str,
-        automatic_metadata: AutomaticMetadata | None = None,
         manual_metadata: ManualMetadata | None = None,
+        *,
+        automatic_metadata: AutomaticMetadata | None = None,
+        save_metadata_to_filesystem: bool = True,
     ) -> Iterator[File]:
         amd = automatic_metadata or self.tracker.get_automatic_metadata()
         mmd = manual_metadata or ManualMetadata()
@@ -56,6 +58,11 @@ class Handler:
         yield file
         file.update_hash_and_byte_size()
         self.db.save(file)
+        if save_metadata_to_filesystem:
+            self.fs.write_text(
+                remote_url=self.fs.define_remote_url(amd, file_id, ".metadata.yaml"),
+                text=file.to_yaml(),
+            )
 
     def load(self, file_id: ID) -> File:
         file_info = self.db.load(file_id)
