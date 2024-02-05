@@ -1,8 +1,0 @@
-assertpy
-boto3
-pandas
-pymongo
-python-dotenv
-PyYAML
-PyYAML
-toolz
