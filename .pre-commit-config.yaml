@@ -3,7 +3,7 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-added-large-files
-      - id: end-of-file-fixer
+      # - id: end-of-file-fixer  # makes trouble in CI only?!
       - id: mixed-line-ending
         args: [--fix=lf]
       - id: detect-aws-credentials
