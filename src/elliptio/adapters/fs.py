@@ -5,7 +5,7 @@ import fsspec
 from elliptio.interfaces import ID, AutomaticMetadata, FileSystemInterface
 
 
-class FsspecFilesys(FileSystemInterface):
+class FsspecFilesystem(FileSystemInterface):
     def __init__(self, prefix: str, protocol="file", **storage_options) -> None:
         self.fs: fsspec.AbstractFileSystem = fsspec.filesystem(
             protocol,
@@ -31,15 +31,18 @@ class FsspecFilesys(FileSystemInterface):
             ],
         )
 
-    def upload(self, local_path: str, remote_url: str) -> None:
+    def create_parent_dir(self, remote_url: str) -> None:
         self.fs.mkdirs(self.fs._parent(remote_url), exist_ok=True)  # noqa: SLF001
+
+    def upload(self, local_path: str, remote_url: str) -> None:
+        self.create_parent_dir(remote_url)
         self.fs.put(lpath=local_path, rpath=remote_url)
 
     def download(self, remote_url: str, local_path: str) -> None:
         self.fs.get(rpath=remote_url, lpath=local_path)
 
     def write_text(self, remote_url: str, text: str) -> None:
-        self.fs.mkdirs(self.fs._parent(remote_url), exist_ok=True)  # noqa: SLF001
+        self.create_parent_dir(remote_url)
         with self.fs.open(remote_url, "w") as f:
             f.write(text)
 

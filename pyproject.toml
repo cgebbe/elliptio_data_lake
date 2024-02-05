@@ -135,6 +135,7 @@ dev = [
     "ipykernel",
     "pudb",
     "pytest-pudb",
+    "s3fs",
 ]
 # from https://docs.astral.sh/ruff/configuration/
 lint = [

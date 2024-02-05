@@ -42,12 +42,14 @@ class Handler:
     ) -> Iterator[File]:
         amd = automatic_metadata or self.tracker.get_automatic_metadata()
         mmd = manual_metadata or self.mmd or ManualMetadata()
-        file_id = self.id_creator.create_unique_id()
+        file_id = self.id_creator.create_unique_id("file")
+        remote_url = self.fs.define_remote_url(amd, file_id, relpath)
+        self.fs.create_parent_dir(remote_url)
         file = File(
             file_id=file_id,
             run_id=self.run_id,
             relpath=relpath,
-            remote_url=self.fs.define_remote_url(amd, file_id, relpath),
+            remote_url=remote_url,
             file_hash="",
             byte_size=0,
             automatic_metadata=amd,
@@ -56,6 +58,7 @@ class Handler:
             based_on=self.based_on.copy(),
             fs=self.fs,
         )
+
         yield file
         file.update_hash_and_byte_size()
         self.db.save(file)

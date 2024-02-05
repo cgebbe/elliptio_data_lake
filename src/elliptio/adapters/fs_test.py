@@ -2,12 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from elliptio.adapters.fs import FileSystemInterface, FsspecFilesys
+from elliptio.adapters.fs import FileSystemInterface, FsspecFilesystem
 
 
 @pytest.fixture()
 def fs():
-    return FsspecFilesys("local")
+    return FsspecFilesystem("local")
 
 
 @pytest.fixture()

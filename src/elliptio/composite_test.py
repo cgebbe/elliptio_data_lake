@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from elliptio.composite import Handler, get_default_handler
+from elliptio.composite import Handler, get_handler
 
 
 def test_create_text(handler: Handler):
@@ -65,7 +65,7 @@ def test_query(handler: Handler):
 
 @pytest.fixture()
 def handler(tmp_path) -> Handler:
-    return get_default_handler(tmp_path)
+    return get_handler(dirpath=tmp_path)
 
 
 @pytest.fixture()

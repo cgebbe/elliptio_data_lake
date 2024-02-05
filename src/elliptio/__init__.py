@@ -1,8 +1,8 @@
-from elliptio.composite import Handler, get_default_handler
+from elliptio.composite import Handler, get_handler
 from elliptio.interfaces import ManualMetadata
 
 __all__ = [
-    "get_default_handler",
+    "get_handler",
     "Handler",
     "ManualMetadata",
 ]

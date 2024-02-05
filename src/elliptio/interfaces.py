@@ -90,6 +90,10 @@ class FileSystemInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def create_parent_dir(self, remote_url: str) -> None:
+        pass
+
+    @abc.abstractmethod
     def upload(self, local_path: str, remote_url: str) -> None:
         pass
 
